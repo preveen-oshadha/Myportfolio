@@ -1,8 +1,10 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { TypeAnimation } from "react-type-animation";
+import { useEffect, useState } from "react";
 
 import {
   SiReact,
@@ -12,6 +14,22 @@ import {
 } from "react-icons/si";
 
 export default function Hero() {
+  const [mounted, setMounted] = useState(false);
+  const [particles, setParticles] = useState<
+    { id: number; top: string; left: string }[]
+  >([]);
+
+  useEffect(() => {
+    setMounted(true);
+    setParticles(
+      Array.from({ length: 40 }, (_, i) => ({
+        id: i,
+        top: `${Math.random() * 100}%`,
+        left: `${Math.random() * 100}%`,
+      }))
+    );
+  }, []);
+
   return (
     <section
       id="home"
@@ -28,13 +46,13 @@ export default function Hero() {
 
       {/* Particles */}
       <div className="absolute inset-0">
-        {[...Array(40)].map((_, i) => (
+        {mounted && particles.map((particle) => (
           <div
-            key={i}
+            key={particle.id}
             className="absolute w-1 h-1 bg-violet-400 rounded-full animate-pulse"
             style={{
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
+              top: particle.top,
+              left: particle.left,
             }}
           />
         ))}
@@ -60,20 +78,22 @@ export default function Hero() {
           </h1>
 
           <div className="mt-6 text-2xl font-medium text-gray-300 h-12">
-            <TypeAnimation
-              sequence={[
-                "Full Stack Developer",
-                2000,
-                "UI/UX Designer",
-                2000,
-                "Next.js Developer",
-                2000,
-                "Software Engineer",
-                2000,
-              ]}
-              speed={50}
-              repeat={Infinity}
-            />
+            {mounted && (
+              <TypeAnimation
+                sequence={[
+                  "Full Stack Developer",
+                  2000,
+                  "UI/UX Designer",
+                  2000,
+                  "Next.js Developer",
+                  2000,
+                  "Software Engineer",
+                  2000,
+                ]}
+                speed={50}
+                repeat={Infinity}
+              />
+            )}
           </div>
 
           <p className="mt-6 text-gray-400 max-w-xl leading-relaxed">
@@ -83,7 +103,8 @@ export default function Hero() {
           </p>
 
           <div className="flex flex-wrap gap-4 mt-10">
-            <button
+            <Link
+              href="#projects"
               className="
               px-8 py-4 rounded-xl
               bg-gradient-to-r
@@ -95,12 +116,16 @@ export default function Hero() {
               transition-all
               duration-300
               hover:shadow-[0_0_40px_rgba(139,92,246,0.6)]
+              text-center
             "
             >
               View My Work
-            </button>
+            </Link>
 
-            <button
+            <a
+              href="https://drive.google.com/file/d/1qx6S9zkdp8F0YjDluikyyN3q173Eyt5V/view?usp=sharing"
+              target="_blank"
+              rel="noopener noreferrer"
               className="
               px-8 py-4 rounded-xl
               border border-white/20
@@ -108,10 +133,11 @@ export default function Hero() {
               hover:border-violet-500
               hover:bg-violet-500/10
               transition-all
+              text-center
             "
             >
               Download CV
-            </button>
+            </a>
           </div>
 
           {/* Stats */}
